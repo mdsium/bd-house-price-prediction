@@ -3,14 +3,16 @@ Django settings for backend project.
 """
 
 from pathlib import Path
+import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-k7nex5@p&*gu7q^()jtx$05p6wh-#xl)6v9x+5yuh!f!jt!wn*'
 
-DEBUG = True
+# ================== SECURITY ==================
+DEBUG = False   # ← Production এ False রাখতেই হবে
 
-ALLOWED_HOSTS = ['*']   # Change later in production
+ALLOWED_HOSTS = ['*']   # Render এ '*' রাখা যায়, পরে চাইলে নির্দিষ্ট করবে
 
 # ================== APPLICATIONS ==================
 INSTALLED_APPS = [
@@ -24,16 +26,15 @@ INSTALLED_APPS = [
     # Third Party
     'rest_framework',
     'drf_yasg',
-    'corsheaders',           # ← Added for React frontend
-
-    # Local Apps
+    'corsheaders',
     'api',
 ]
 
 # ================== MIDDLEWARE ==================
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',          # ← Must be at the top
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',   # ← Static files এর জন্য খুব জরুরি
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -47,7 +48,7 @@ ROOT_URLCONF = 'backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],   # You can add templates folder later if needed
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -71,21 +72,31 @@ DATABASES = {
 
 # ================== REST FRAMEWORK ==================
 REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',
     ]
 }
 
-# ================== CORS (for React) ==================
-CORS_ALLOW_ALL_ORIGINS = True   # For development only
+# ================== CORS ==================
+CORS_ALLOW_ALL_ORIGINS = True   # Development + Free Render এর জন্য
 
-# Static files
+# ================== STATIC FILES (Very Important for Render) ==================
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# ================== drf-yasg Settings ==================
+# WhiteNoise Compression
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
+
+# ================== drf-yasg ==================
 SWAGGER_SETTINGS = {
-    'DEFAULT_INFO': 'backend.urls.swagger_info',  # We'll define this in urls.py
+    'DEFAULT_INFO': 'backend.urls.swagger_info',
     'USE_SESSION_AUTH': False,
 }
 
