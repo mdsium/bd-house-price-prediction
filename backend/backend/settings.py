@@ -10,7 +10,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-k7nex5@p&*gu7q^()jtx$05p6wh-#xl)6v9x+5yuh!f!jt!wn*'
 
 # ================== SECURITY ==================
-DEBUG = False   # ← Production এ False রাখতেই হবে
+DEBUG = True   # ← Production এ False রাখতেই হবে
 
 ALLOWED_HOSTS = ['*']   # Render এ '*' রাখা যায়, পরে চাইলে নির্দিষ্ট করবে
 
@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework_simplejwt',
 
     # Third Party
     'rest_framework',
