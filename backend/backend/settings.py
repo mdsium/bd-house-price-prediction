@@ -1,7 +1,7 @@
 """
 Django settings for backend project.
 """
-
+import dj_database_url
 from pathlib import Path
 import os
 
@@ -102,3 +102,27 @@ SWAGGER_SETTINGS = {
 }
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+# ================== DATABASE CONFIG ==================
+if os.environ.get('DATABASE_URL'):
+    # Production (Render)
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=os.environ.get('postgresql://bd_house_price_db_user:1RLIZiYDCTVddq2oPl90CbCuLKZj2L1g@dpg-d86spsrtqb8s73fubqvg-a.singapore-postgres.render.com/bd_house_price_db'),
+            conn_max_age=600,
+            conn_health_checks=True,
+        )
+    }
+else:
+    # Local Development (SQLite)
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
